@@ -7,9 +7,9 @@ include_directories(src)
 
 add_executable(project2b_G52
     src/Food.cpp
-    src/Food.h
     src/main.cpp
-    src/main.h
     src/quicksort.cpp
-    src/quicksort.h)
+    src/heapsort.cpp
+    src/heapify.cpp)
+
 configure_file("food.csv" "${CMAKE_BINARY_DIR}/food.csv" COPYONLY)

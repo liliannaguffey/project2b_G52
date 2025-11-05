@@ -6,10 +6,13 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Food.h"
-#include "quicksort.h"
-
+#include <chrono>
+#include "Food.cpp"
+#include "quicksort.cpp"
+#include "heapify.cpp"
+#include "heapsort.cpp"
 using namespace std;
+
 void printTopFoods(const vector<Food>& foods, int nutrientIdx, int topN = 5) {
   if (foods.empty()) return;
   int n = static_cast<int>(foods.size());
@@ -54,11 +57,24 @@ int main() {
     string selectedNutrient = nutrients[choice - 1];
     int nutrientIdx = choice - 1;
     cout << "Sorting by: " << selectedNutrient << "...\n";
+    vector<Food> foodCopy = foods;
 
+    auto start = chrono::high_resolution_clock::now();
     quicksort(foods, nutrientIdx);
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> quicksortTime = end - start;
 
     cout << "\n Top 5 foods high in " << selectedNutrient << ":\n";
     printTopFoods(foods, nutrientIdx);
+    cout << "Quicksort Elapsed Time: " << quicksortTime.count() << " seconds\n" << endl;
+
+    start = chrono::high_resolution_clock::now();
+    heapsort(foodCopy, nutrientIdx);
+    end = chrono::high_resolution_clock::now();
+    chrono::duration<double> heapsortTime = end - start;
+
+    printTopFoods(foodCopy, nutrientIdx);
+    cout << "Heapsort Elapsed Time: " << heapsortTime.count() << " seconds" << endl;
 
     cout <<"\n Check another nutrient? (y/n): ";
     getline(cin, response);
