@@ -9,12 +9,13 @@
 #include <vector>
 #include <string>
 #include <chrono>
-#include "Food.cpp"
-#include "quicksort.cpp"
-#include "heapify.cpp"
-#include "heapsort.cpp"
+#include "Food.h"
+#include "quicksort.h"
+#include "heapify.h"
+#include "heapsort.h"
 #include <iomanip>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -91,6 +92,7 @@ static void print_Group_Title(const string& group) {
   / __|___ _ _  ___ _ _ __ _| |
  | (_ / -_) ' \/ -_) '_/ _` | |
   \___\___|_||_\___|_| \__,_|_|
+
 )"<< "\n";
     } else if (group == "Fats") {
         cout <<
@@ -117,6 +119,7 @@ static void print_Group_Title(const string& group) {
  | | / (_) /____ ___ _  (_)__  ___
  | |/ / / __/ _ `/  ' \/ / _ \(_-<
  |___/_/\__/\_,_/_/_/_/_/_//_/___/
+
 )"<< "\n";
     }
 }
@@ -203,12 +206,14 @@ void printTopFoods(const vector<Food>& foods, int nutrientIdx, int topN = 5) {
   if (foods.empty()) return;
   int n = static_cast<int>(foods.size());
   int start = max(0, n - topN);
-  for (int i = n-1; i >= start; --i) {
-    cout << foods[i].description << ": " << foods[i].nutrients[nutrientIdx] << "\n";
-  }
+    int rank = 1;
+    for (int i = n - 1; i >= start; --i) {
+        print_Ranked_Row(rank, foods[i].description, foods[i].nutrients[nutrientIdx]);
+        rank++;
+    }
 }
 
-// i want to print the big EAT HEALTHY ascii at the very end
+
 static void print_Eat_Healthy() {
     cout <<
         R"(
@@ -293,7 +298,7 @@ int main() {
     }
     string selectedNutrient = nutrients[choice - 1];
     int nutrientIdx = choice - 1;
-    cout << "Sorting by: " << selectedNutrient << "...\n";
+    cout << "Sorting by: " << strip_Group_Prefix(strip_Data_Prefix(selectedNutrient)) << "...\n";
     vector<Food> foodCopy = foods;
 
     auto start = chrono::high_resolution_clock::now();
@@ -301,7 +306,7 @@ int main() {
     auto end = chrono::high_resolution_clock::now();
     chrono::duration<double> quicksortTime = end - start;
 
-    cout << "\n Top 5 foods high in " << selectedNutrient << ":\n";
+    cout << "\nTop 5 foods high in " << strip_Group_Prefix(strip_Data_Prefix((selectedNutrient))) << ":\n";
     printTopFoods(foods, nutrientIdx);
     cout << "Quicksort Elapsed Time: " << quicksortTime.count() << " seconds\n" << endl;
 
@@ -313,10 +318,11 @@ int main() {
     printTopFoods(foodCopy, nutrientIdx);
     cout << "Heapsort Elapsed Time: " << heapsortTime.count() << " seconds" << endl;
 
-    cout <<"\n Check another nutrient? (y/n): ";
+    cout <<"\nCheck another nutrient? (y/n): ";
     getline(cin, response);
   }while (response == "y" || response == "Y");
 
-  cout << "Eat Healthy!\n";
+  //cout << "Eat Healthy!\n";
+    print_Eat_Healthy();
   return 0;
 }
